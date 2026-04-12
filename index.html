@@ -1693,6 +1693,34 @@ function sendWA() {
   window.open('https://wa.me/573177572940?text=' + encodeURIComponent(text), '_blank');
 }
 
+// ════════════════ LOGIN ════════════════
+const ADMIN_USER = 'fotojaponesa';
+const ADMIN_PASS = 'japonesa2025';
+
+function openLogin() {
+  document.getElementById('loginModal').classList.add('active');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  setTimeout(() => document.getElementById('loginUser').focus(), 100);
+}
+
+function closeLogin() {
+  document.getElementById('loginModal').classList.remove('active');
+}
+
+function checkLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    closeLogin();
+    openAdmin();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+  }
+}
 // ════════════════ NAV MOBILE ════════════════
 function toggleMenu() {
   document.getElementById('navLinks').classList.toggle('open');
