@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FotoJaponesa — Tecnología & Arte Visual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --red: #E8001C;
+    --red-dim: #9B0013;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --card: #181818;
+    --border: #2a2a2a;
+    --text: #E8E8E8;
+    --muted: #888;
+    --gold: #C8A84B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── JAPANESE STRIPE PATTERN ── */
+  .jp-stripe {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(232,0,28,0.03) 2px,
+      rgba(232,0,28,0.03) 4px
+    );
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+  .font-serif { font-family: 'Noto Serif JP', serif; }
+
+  /* ── RED ACCENT LINE ── */
+  .accent-line {
+    display: inline-block;
+    width: 40px;
+    height: 3px;
+    background: var(--red);
+    vertical-align: middle;
+    margin-right: 12px;
+  }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.12em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-logo span { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.25s;
+  }
+
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .btn-admin {
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 6px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-admin:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
+  /* ── HAMBURGER ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--text); transition: all 0.3s; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 64px;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 70% 50%, rgba(232,0,28,0.12) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(200,168,75,0.06) 0%, transparent 60%),
+      var(--black);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    width: 100%;
+  }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 9vw, 8rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title em {
+    font-style: normal;
+    color: var(--red);
+    -webkit-text-stroke: 0px;
+  }
+
+  .hero-title .outline {
+    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: #fff;
+    padding: 14px 32px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .btn-primary:hover { background: var(--red-dim); transform: translateY(-2px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 14px 32px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover { border-color: var(--text); }
+
+  .hero-stat-bar {
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 2;
+  }
+
+  .hero-stat {
+    text-align: right;
+  }
+
+  .hero-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero-vline {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--red), transparent);
+    margin-left: auto;
+    margin-right: 4px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: #fff;
+    line-height: 1;
+  }
+
+  .section-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--red);
+    margin-top: 1rem;
+  }
+
+  /* ── PRODUCT CARDS ── */
+  .product-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    z-index: 1;
+  }
+
+  .product-card:hover { transform: translateY(-4px); border-color: #3a3a3a; }
+  .product-card:hover::before { transform: scaleX(1); }
+
+  .product-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+    background: #1a1a1a;
+  }
+
+  .product-card:hover .product-img { transform: scale(1.03); }
+
+  .product-info {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .product-cat {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .product-name {
+    font-size: 0.85rem;
+    color: #fff;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .product-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .product-price.no-price {
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--red);
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  /* ── STUDIO SECTION ── */
+  .studio-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .studio-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .studio-card:hover { transform: translateY(-3px); }
+  .studio-card:hover::after { transform: scaleX(1); }
+
+  .studio-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .studio-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: #fff;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .studio-card p {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .studio-price-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    background: rgba(232,0,28,0.1);
+    border: 1px solid rgba(232,0,28,0.3);
+    color: var(--red);
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── PROMO SECTION ── */
+  .promo-card {
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dim) 100%);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .promo-card::before {
+    content: '週間';
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.08);
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* ── VIDEO SECTION ── */
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 267px;
+    margin: 0 auto;
+  }
+
+  .video-frame-border {
+    position: absolute;
+    inset: -8px;
+    border: 1px solid var(--red);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .video-frame-border::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 20px; height: 20px;
+    border-top: 2px solid var(--gold);
+    border-left: 2px solid var(--gold);
+  }
+
+  .video-frame-border::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 20px; height: 20px;
+    border-bottom: 2px solid var(--gold);
+    border-right: 2px solid var(--gold);
+  }
+
+  /* ── CONTACT ── */
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.2s;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .contact-link:hover { color: #fff; }
+
+  .contact-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover .contact-icon {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+
+  .social-link:hover {
+    border-color: var(--red);
+    color: var(--red);
+    transform: translateY(-2px);
+  }
+
+  /* ── WHATSAPP FLOAT ── */
+  .wa-float {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    width: 56px;
+    height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.55); }
+
+  .wa-float svg { width: 28px; height: 28px; fill: #fff; }
+
+  .wa-pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid #25D366;
+    animation: pulse 2s ease-out infinite;
+    opacity: 0;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* ── ADMIN MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    width: 95%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    color: #fff;
+  }
+
+  .modal-close {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { border-color: var(--red); color: var(--red); }
+
+  .modal-body { padding: 1.5rem; }
+
+  .admin-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  .admin-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+
+  .admin-tab.active { color: var(--red); border-bottom-color: var(--red); }
+  .admin-tab:hover:not(.active) { color: var(--text); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .admin-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-group label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--red); }
+
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .btn-save {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-save:hover { background: var(--red-dim); }
+
+  .btn-delete {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 6px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-delete:hover { background: var(--red); color: #fff; }
+
+  .btn-edit {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 6px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-edit:hover { background: var(--gold); color: var(--black); }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+
+  .admin-table th {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .admin-table td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  .admin-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 64px 0 0;
+      background: rgba(10,10,10,0.98);
+      padding: 2rem;
+      gap: 1.5rem;
+      z-index: 99;
+    }
+    .hamburger { display: flex; }
+    .hero-stat-bar { display: none; }
+    .admin-form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <div class="nav-logo">
+    <span>⊕</span> FOTO<span>JAPONESA</span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#tienda">Tienda Tech</a></li>
+    <li><a href="#estudio">Estudio</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <button class="btn-admin" onclick="openAdmin()">⊙ Admin</button>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero jp-stripe" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">Barbosa, Santander — Est. Colombia</div>
+    <h1 class="hero-title">
+      FOTO<em>JAPONESA</em><br>
+      <span class="outline">TECNOLOGÍA</span><br>
+      & ARTE VISUAL
+    </h1>
+    <p class="hero-sub">
+      Tecnología de última generación y estudio fotográfico profesional en un solo lugar. Productos tech, cámaras instantáneas, accesorios y sesiones a tu medida.
+    </p>
+    <div class="hero-btns">
+      <a href="#tienda" class="btn-primary">Ver Productos</a>
+      <a href="#estudio" class="btn-secondary">Nuestro Estudio</a>
+    </div>
+  </div>
+
+  <div class="hero-stat-bar">
+    <div class="hero-stat">
+      <div class="hero-stat-num">500+</div>
+      <div class="hero-stat-label">Productos</div>
+    </div>
+    <div class="hero-vline"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">10+</div>
+      <div class="hero-stat-label">Años activos</div>
+    </div>
+    <div class="hero-vline"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">★★★★★</div>
+      <div class="hero-stat-label">Clientes felices</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ PRODUCTOS TECH ══════════════ -->
+<section id="tienda" style="padding: 6rem 2rem; max-width:1200px; margin:0 auto;">
+  <div class="section-header fade-up">
+    <div class="section-label">// Tienda Tech</div>
+    <h2 class="section-title">PRODUCTOS<br>DESTACADOS</h2>
+    <div class="section-rule"></div>
+  </div>
+
+  <!-- Promo de la semana -->
+  <div id="promoWeek" style="margin-bottom:2.5rem;"></div>
+
+  <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <!-- Cards generadas por JS -->
+  </div>
+</section>
+
+<!-- ══════════════ ESTUDIO ══════════════ -->
+<section id="estudio" style="background: var(--dark); padding: 6rem 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header fade-up">
+      <div class="section-label">// Estudio Fotográfico</div>
+      <h2 class="section-title">SERVICIOS<br>PROFESIONALES</h2>
+      <div class="section-rule"></div>
+    </div>
+
+    <div id="studiosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Cards de servicios generadas por JS -->
+    </div>
+
+    <!-- Galería visual -->
+    <div style="margin-top:3rem; display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:8px;">
+      <img src="483678604_9405715992815376_807983187731993684_n__1_.jpg" alt="Fujifilm Instax Mini" style="width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(30%);transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(30%)'">
+      <img src="483921799_9405715902815385_3402235972505561669_n.jpg" alt="Instax Mini 11 azul" style="width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(30%);transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(30%)'">
+      <img src="192846867_4085923531461342_5073090858210702633_n.jpg" alt="Samsung Galaxy A32" style="width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(30%);transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(30%)'">
+      <img src="485987042_1280915417369302_4221300580109475872_n.jpg" alt="Tecno Pova Neo" style="width:100%;aspect-ratio:1;object-fit:cover;filter:grayscale(30%);transition:filter 0.3s;" onmouseover="this.style.filter='grayscale(0)'" onmouseout="this.style.filter='grayscale(30%)'">
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ VIDEO ══════════════ -->
+<section style="padding: 6rem 2rem; text-align:center;">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header fade-up" style="text-align:center;">
+      <div class="section-label">// Multimedia</div>
+      <h2 class="section-title">SÍGUENOS<br>EN REDES</h2>
+      <div class="section-rule" style="margin:1rem auto 0;"></div>
+    </div>
+
+    <div style="display:flex; justify-content:center; align-items:center; gap:4rem; flex-wrap:wrap; margin-top:3rem;">
+      <div>
+        <div class="video-wrapper">
+          <div class="video-frame-border"></div>
+          <iframe src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F26180057491654055%2F&show_text=false&width=267&t=0"
+            width="267" height="476"
+            style="border:none;overflow:hidden;display:block;"
+            scrolling="no" frameborder="0"
+            allowfullscreen="true"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+          </iframe>
+        </div>
+        <p style="font-size:0.7rem;color:var(--muted);margin-top:20px;letter-spacing:0.1em;">@FotoJaponesaBarbosa</p>
+      </div>
+
+      <div style="max-width:340px; text-align:left;">
+        <p style="font-family:'Noto Serif JP',serif; font-size:1.1rem; color:var(--text); line-height:1.7; margin-bottom:1.5rem;">
+          "Capturamos momentos con tecnología de vanguardia. Síguenos para ver las últimas llegadas, promociones exclusivas y sesiones de nuestro estudio."
+        </p>
+        <div style="display:flex;gap:1rem; flex-wrap:wrap;">
+          <a href="https://www.facebook.com/FotoJaponesaBarbosa" target="_blank" class="btn-secondary" style="font-size:0.7rem;padding:10px 20px;">Facebook</a>
+          <a href="https://www.instagram.com/foto_japonesa" target="_blank" class="btn-secondary" style="font-size:0.7rem;padding:10px 20px;">Instagram</a>
+          <a href="https://wa.me/573177572940?text=Hola,%20vengo%20de%20la%20página%20web" target="_blank" class="btn-primary" style="font-size:0.7rem;padding:10px 20px;">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CONTACTO ══════════════ -->
+<section id="contacto" style="background: var(--dark); padding: 6rem 2rem; border-top: 1px solid var(--border);">
+  <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start;">
+    <div class="fade-up">
+      <div class="section-label">// Contacto</div>
+      <h2 class="section-title">VISÍTANOS<br>O ESCRÍBENOS</h2>
+      <div class="section-rule" style="margin-bottom:2rem;"></div>
+
+      <a href="https://maps.google.com/?q=Cra+9+No+10-04+Barbosa+Santander+Colombia" target="_blank" class="contact-link">
+        <div class="contact-icon">📍</div>
+        <span>Cra 9 No. 10-04, Barbosa, Santander, Colombia</span>
+      </a>
+      <a href="tel:+573177572940" class="contact-link">
+        <div class="contact-icon">📞</div>
+        <span>+57 317 7572940</span>
+      </a>
+      <a href="mailto:jakyjaponesa@gmail.com" class="contact-link">
+        <div class="contact-icon">✉️</div>
+        <span>jakyjaponesa@gmail.com</span>
+      </a>
+      <a href="https://wa.me/573177572940?text=Hola,%20vengo%20de%20la%20página%20web" target="_blank" class="contact-link">
+        <div class="contact-icon">💬</div>
+        <span>WhatsApp — Atención inmediata</span>
+      </a>
+
+      <div style="margin-top:2rem; padding:1.5rem; background:var(--card); border:1px solid var(--border);">
+        <div style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Horario</div>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:#fff;">Lun — Sáb: 8am – 7pm</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem;">Dom: 10am – 2pm</div>
+      </div>
+    </div>
+
+    <div class="fade-up">
+      <div style="background:var(--card); border:1px solid var(--border); padding:2rem;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:#fff;margin-bottom:1.5rem;letter-spacing:0.05em;">ENVÍANOS UN MENSAJE</div>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" placeholder="Tu nombre completo" id="contactName">
+          </div>
+          <div class="form-group">
+            <label>Teléfono / WhatsApp</label>
+            <input type="tel" placeholder="+57 300 000 0000" id="contactPhone">
+          </div>
+          <div class="form-group">
+            <label>Mensaje</label>
+            <textarea placeholder="¿En qué podemos ayudarte?" id="contactMsg"></textarea>
+          </div>
+          <button class="btn-primary" onclick="sendWA()" style="clip-path:none;">Enviar por WhatsApp</button>
+        </div>
+      </div>
+
+      <!-- Mapa placeholder -->
+      <div style="margin-top:1rem;background:var(--card);border:1px solid var(--border);height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(232,0,28,0.03) 10px,rgba(232,0,28,0.03) 20px);"></div>
+        <a href="https://maps.google.com/?q=Cra+9+No+10-04+Barbosa+Santander+Colombia" target="_blank" style="position:relative;z-index:1;text-align:center;color:var(--muted);text-decoration:none;">
+          <div style="font-size:2.5rem;">🗺️</div>
+          <div style="font-size:0.72rem;letter-spacing:0.1em;margin-top:8px;">Ver en Google Maps</div>
+          <div style="font-size:0.65rem;color:var(--red);margin-top:4px;">Cra 9 No. 10-04 · Barbosa, Santander</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div style="max-width:1200px; margin:0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:2rem; margin-bottom:2rem;">
+      <div>
+        <div class="nav-logo" style="margin-bottom:0.75rem; font-size:1.6rem;">
+          <span style="color:var(--red);">⊕</span> FOTO<span style="color:var(--red);">JAPONESA</span>
+        </div>
+        <p style="font-size:0.72rem; color:var(--muted); max-width:280px; line-height:1.6;">
+          Tecnología, fotografía y arte visual en el corazón de Barbosa, Santander.
+        </p>
+      </div>
+
+      <div>
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Redes Sociales</div>
+        <div style="display:flex;gap:10px;">
+          <a href="https://www.facebook.com/FotoJaponesaBarbosa" target="_blank" class="social-link" title="Facebook">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/foto_japonesa" target="_blank" class="social-link" title="Instagram">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="social-link" title="TikTok">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.73a4.85 4.85 0 01-1.01-.04z"/></svg>
+          </a>
+          <a href="https://wa.me/573177572940?text=Hola,%20vengo%20de%20la%20página%20web" target="_blank" class="social-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--border); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div style="font-size:0.65rem; color:var(--muted);">© 2025 FotoJaponesa · Barbosa, Santander, Colombia · Todos los derechos reservados</div>
+      <div style="font-size:0.65rem; color:var(--border);">Diseño web by FotoJaponesa Digital</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════ WHATSAPP FLOAT ══════════════ -->
+<a href="https://wa.me/573177572940?text=Hola,%20vengo%20de%20la%20página%20web" target="_blank" class="wa-float">
+  <div class="wa-pulse"></div>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<!-- ══════════════ ADMIN MODAL ══════════════ -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⊙ PANEL DE ADMINISTRACIÓN — FOTOJAPONESA</div>
+      <button class="modal-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('productos')">Productos Tech</button>
+        <button class="admin-tab" onclick="switchTab('servicios')">Servicios Foto</button>
+        <button class="admin-tab" onclick="switchTab('promos')">Promociones</button>
+      </div>
+
+      <!-- ── TAB: PRODUCTOS ── -->
+      <div class="tab-panel active" id="tab-productos">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div style="font-size:0.7rem;color:var(--muted);">Gestiona los productos de tecnología.</div>
+          <button class="btn-save" onclick="showProductForm()">+ Nuevo Producto</button>
+        </div>
+
+        <div id="productForm" style="display:none; background:var(--card); border:1px solid var(--border); padding:1.5rem; margin-bottom:1.5rem;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:1rem;letter-spacing:0.05em;" id="productFormTitle">NUEVO PRODUCTO</div>
+          <input type="hidden" id="editProductId">
+          <div class="admin-form-grid">
+            <div class="form-group">
+              <label>Nombre del producto</label>
+              <input type="text" id="pName" placeholder="Ej: KBroad KTS-1185">
+            </div>
+            <div class="form-group">
+              <label>Categoría</label>
+              <select id="pCat">
+                <option>Parlantes Bluetooth</option>
+                <option>Smartphones</option>
+                <option>Cámaras Instantáneas</option>
+                <option>Electrónica</option>
+                <option>Accesorios</option>
+                <option>Drones</option>
+                <option>Audio</option>
+                <option>Otro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Precio (COP)</label>
+              <input type="number" id="pPrice" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Badge (ej: Nuevo, Oferta)</label>
+              <input type="text" id="pBadge" placeholder="Nuevo">
+            </div>
+            <div class="form-group full">
+              <label>Imagen (nombre del archivo)</label>
+              <select id="pImg">
+                <option value="649195356_18083472746212967_6343403329254503684_n.jpg">Parlante KBroad KTS-1185 (azul)</option>
+                <option value="649228148_18083472782212967_112522463274791783_n.jpg">Parlante KBroad (lado)</option>
+                <option value="192846867_4085923531461342_5073090858210702633_n.jpg">Samsung Galaxy A32</option>
+                <option value="485987042_1280915417369302_4221300580109475872_n.jpg">Tecno Pova Neo</option>
+                <option value="494219917_1320184666775710_2110869277068374042_n.jpg">Secadora Browans</option>
+                <option value="118276080_3312201085500261_2377318347772761401_n.jpg">Decodificador Krono TDT</option>
+                <option value="132036641_3641806419206391_3623459176428622722_n.jpg">Micrófonos Karaoke (3 colores)</option>
+                <option value="132040041_3641806415873058_8680329540733184526_n.jpg">Micrófonos Karaoke (5 colores)</option>
+                <option value="132109151_3642138082506558_5879441072699816271_n.jpg">Cubo LED con hielo</option>
+                <option value="132042598_3642138079173225_6016531380912736782_n.jpg">Cubo LED púrpura</option>
+                <option value="192744385_4085906824796346_6807473928442611770_n.jpg">Redmi Note 10</option>
+                <option value="118213611_3302514369802266_5575555488636121022_n.jpg">Cortadora Wahl Icon</option>
+                <option value="118624670_3312150438838659_7583138341840152867_n.jpg">Dron Fold Drone</option>
+                <option value="483678604_9405715992815376_807983187731993684_n__1_.jpg">Instax Mini (verde)</option>
+                <option value="483921799_9405715902815385_3402235972505561669_n.jpg">Instax Mini 11 (azul)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:0.5rem;">
+            <button class="btn-save" onclick="saveProduct()">Guardar</button>
+            <button class="btn-delete" onclick="document.getElementById('productForm').style.display='none'">Cancelar</button>
+          </div>
+        </div>
+
+        <div id="productTableWrap">
+          <table class="admin-table" id="productTable">
+            <thead>
+              <tr>
+                <th>Img</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Badge</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody"></tbody>
+          </table>
+          <div class="empty-state" id="productEmpty" style="display:none;">No hay productos. Añade el primero ↑</div>
+        </div>
+      </div>
+
+      <!-- ── TAB: SERVICIOS ── -->
+      <div class="tab-panel" id="tab-servicios">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div style="font-size:0.7rem;color:var(--muted);">Servicios del estudio fotográfico.</div>
+          <button class="btn-save" onclick="showServiceForm()">+ Nuevo Servicio</button>
+        </div>
+
+        <div id="serviceForm" style="display:none; background:var(--card); border:1px solid var(--border); padding:1.5rem; margin-bottom:1.5rem;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:1rem;letter-spacing:0.05em;" id="serviceFormTitle">NUEVO SERVICIO</div>
+          <input type="hidden" id="editServiceId">
+          <div class="admin-form-grid">
+            <div class="form-group">
+              <label>Nombre del servicio</label>
+              <input type="text" id="sName" placeholder="Ej: Sesión Retrato">
+            </div>
+            <div class="form-group">
+              <label>Icono (emoji)</label>
+              <input type="text" id="sIcon" placeholder="📷">
+            </div>
+            <div class="form-group">
+              <label>Precio desde (COP)</label>
+              <input type="number" id="sPrice" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Duración aprox.</label>
+              <input type="text" id="sDuration" placeholder="Ej: 1 hora">
+            </div>
+            <div class="form-group full">
+              <label>Descripción</label>
+              <textarea id="sDesc" placeholder="Descripción del servicio..."></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:0.5rem;">
+            <button class="btn-save" onclick="saveService()">Guardar</button>
+            <button class="btn-delete" onclick="document.getElementById('serviceForm').style.display='none'">Cancelar</button>
+          </div>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr><th>Icono</th><th>Servicio</th><th>Precio desde</th><th>Duración</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="serviceTableBody"></tbody>
+        </table>
+        <div class="empty-state" id="serviceEmpty" style="display:none;">No hay servicios. Añade el primero ↑</div>
+      </div>
+
+      <!-- ── TAB: PROMOS ── -->
+      <div class="tab-panel" id="tab-promos">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div style="font-size:0.7rem;color:var(--muted);">Gestiona las promociones de la semana.</div>
+          <button class="btn-save" onclick="showPromoForm()">+ Nueva Promoción</button>
+        </div>
+
+        <div id="promoForm" style="display:none; background:var(--card); border:1px solid var(--border); padding:1.5rem; margin-bottom:1.5rem;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:1rem;letter-spacing:0.05em;" id="promoFormTitle">NUEVA PROMOCIÓN</div>
+          <input type="hidden" id="editPromoId">
+          <div class="admin-form-grid">
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" id="prTitle" placeholder="Ej: Oferta de la semana">
+            </div>
+            <div class="form-group">
+              <label>Descuento (%)</label>
+              <input type="number" id="prDiscount" placeholder="0" min="0" max="100">
+            </div>
+            <div class="form-group">
+              <label>Precio original (COP)</label>
+              <input type="number" id="prOriginal" placeholder="0">
+            </div>
+            <div class="form-group">
+              <label>Precio promocional (COP)</label>
+              <input type="number" id="prPromo" placeholder="0">
+            </div>
+            <div class="form-group full">
+              <label>Descripción de la promo</label>
+              <textarea id="prDesc" placeholder="Detalles de la promoción..."></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:0.5rem;">
+            <button class="btn-save" onclick="savePromo()">Guardar</button>
+            <button class="btn-delete" onclick="document.getElementById('promoForm').style.display='none'">Cancelar</button>
+          </div>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr><th>Título</th><th>Descuento</th><th>Precio Original</th><th>Precio Promo</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="promoTableBody"></tbody>
+        </table>
+        <div class="empty-state" id="promoEmpty" style="display:none;">No hay promociones activas.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════ STATE ════════════════
+const DB = {
+  products: JSON.parse(localStorage.getItem('fj_products') || '[]'),
+  services: JSON.parse(localStorage.getItem('fj_services') || '[]'),
+  promos:   JSON.parse(localStorage.getItem('fj_promos')   || '[]'),
+};
+
+function save() {
+  localStorage.setItem('fj_products', JSON.stringify(DB.products));
+  localStorage.setItem('fj_services', JSON.stringify(DB.services));
+  localStorage.setItem('fj_promos',   JSON.stringify(DB.promos));
+}
+
+// ════════════════ DEFAULTS ════════════════
+const DEFAULT_PRODUCTS = [
+  { id:1, name:'Parlante KBroad KTS-1185', cat:'Parlantes Bluetooth', price:89000, badge:'Nuevo', img:'649195356_18083472746212967_6343403329254503684_n.jpg' },
+  { id:2, name:'Samsung Galaxy A32', cat:'Smartphones', price:850000, badge:'Oferta', img:'192846867_4085923531461342_5073090858210702633_n.jpg' },
+  { id:3, name:'Fujifilm Instax Mini', cat:'Cámaras Instantáneas', price:320000, badge:'', img:'483678604_9405715992815376_807983187731993684_n__1_.jpg' },
+  { id:4, name:'Instax Mini 11 (Sky Blue)', cat:'Cámaras Instantáneas', price:350000, badge:'Popular', img:'483921799_9405715902815385_3402235972505561669_n.jpg' },
+  { id:5, name:'Tecno Pova Neo', cat:'Smartphones', price:750000, badge:'', img:'485987042_1280915417369302_4221300580109475872_n.jpg' },
+  { id:6, name:'Secadora Browans BR-5026', cat:'Electrónica', price:120000, badge:'', img:'494219917_1320184666775710_2110869277068374042_n.jpg' },
+  { id:7, name:'Decodificador Krono TDT', cat:'Electrónica', price:95000, badge:'', img:'118276080_3312201085500261_2377318347772761401_n.jpg' },
+  { id:8, name:'Micrófono Karaoke BT', cat:'Audio', price:75000, badge:'3 Colores', img:'132036641_3641806419206391_3623459176428622722_n.jpg' },
+  { id:9, name:'Micrófono Karaoke BT Pro', cat:'Audio', price:85000, badge:'5 Colores', img:'132040041_3641806415873058_8680329540733184526_n.jpg' },
+  { id:10, name:'Cubo LED Luminoso', cat:'Accesorios', price:150000, badge:'', img:'132109151_3642138082506558_5879441072699816271_n.jpg' },
+  { id:11, name:'Redmi Note 10', cat:'Smartphones', price:980000, badge:'', img:'192744385_4085906824796346_6807473928442611770_n.jpg' },
+  { id:12, name:'Dron Fold Drone HD', cat:'Drones', price:280000, badge:'Nuevo', img:'118624670_3312150438838659_7583138341840152867_n.jpg' },
+];
+
+const DEFAULT_SERVICES = [
+  { id:1, name:'Sesión de Retratos', icon:'📷', price:80000, duration:'1 hora', desc:'Sesión profesional individual o familiar con fondos iluminados.' },
+  { id:2, name:'Foto Cédula / Pasaporte', icon:'🪪', price:15000, duration:'15 min', desc:'Fotografías para documentos oficiales con formato y especificaciones requeridas.' },
+  { id:3, name:'Retoque Digital', icon:'✨', price:25000, duration:'Entrega 24h', desc:'Edición y retoque profesional de tus fotos: piel, color, fondo y más.' },
+  { id:4, name:'Foto Empresarial', icon:'💼', price:120000, duration:'2 horas', desc:'Sesión corporativa para perfil LinkedIn, página web y materiales empresariales.' },
+  { id:5, name:'Revelado e Impresión', icon:'🖨️', price:5000, duration:'Express', desc:'Revelado digital e impresión en distintos tamaños, papel fotográfico de alta calidad.' },
+  { id:6, name:'Fotografía de Producto', icon:'🛍️', price:60000, duration:'1-2 horas', desc:'Sesión de fotografía para e-commerce, redes sociales y catálogos.' },
+];
+
+if (DB.products.length === 0) { DB.products = DEFAULT_PRODUCTS; save(); }
+if (DB.services.length === 0) { DB.services = DEFAULT_SERVICES; save(); }
+
+// ════════════════ RENDER SITE ════════════════
+function fmt(n) {
+  if (!n || n == 0) return 'Consultar precio';
+  return '$' + parseInt(n).toLocaleString('es-CO');
+}
+
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  DB.products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card fade-up';
+    card.innerHTML = `
+      ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+      <img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect width=%22400%22 height=%22400%22 fill=%22%23181818%22/><text x=%22200%22 y=%22210%22 text-anchor=%22middle%22 fill=%22%23333%22 font-size=%2240%22>📦</text></svg>'">
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-price ${p.price > 0 ? '' : 'no-price'}">${fmt(p.price)}</div>
+      </div>
+    `;
+    card.onclick = () => window.open(`https://wa.me/573177572940?text=Hola%2C%20me%20interesa%20el%20producto%3A%20${encodeURIComponent(p.name)}`, '_blank');
+    grid.appendChild(card);
+  });
+  observeFadeUp();
+}
+
+function renderServices() {
+  const grid = document.getElementById('studiosGrid');
+  grid.innerHTML = '';
+  DB.services.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'studio-card fade-up';
+    card.innerHTML = `
+      <div class="studio-icon">${s.icon || '📷'}</div>
+      <h3>${s.name}</h3>
+      <p>${s.desc}</p>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:0.5rem;flex-wrap:wrap;">
+        <div class="studio-price-badge">Desde ${fmt(s.price)}</div>
+        ${s.duration ? `<div style="font-size:0.68rem;color:var(--muted);">⏱ ${s.duration}</div>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+  observeFadeUp();
+}
+
+function renderPromos() {
+  const wrap = document.getElementById('promoWeek');
+  wrap.innerHTML = '';
+  if (DB.promos.length === 0) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1rem;';
+  DB.promos.forEach(pr => {
+    div.innerHTML += `
+      <div class="promo-card">
+        <div style="font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;">🔥 Promo Semana</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;line-height:1;">${pr.title}</div>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);margin:0.5rem 0;">${pr.desc}</div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:0.75rem;">
+          ${pr.original > 0 ? `<del style="font-size:0.9rem;color:rgba(255,255,255,0.4);">${fmt(pr.original)}</del>` : ''}
+          ${pr.promo > 0 ? `<div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff;">${fmt(pr.promo)}</div>` : ''}
+          ${pr.discount > 0 ? `<div style="background:rgba(255,255,255,0.2);padding:4px 10px;font-size:0.75rem;font-weight:700;">-${pr.discount}%</div>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  wrap.appendChild(div);
+}
+
+// ════════════════ ADMIN MODAL ════════════════
+function openAdmin() {
+  document.getElementById('adminModal').classList.add('active');
+  renderAllTables();
+}
+
+function closeAdmin() {
+  document.getElementById('adminModal').classList.remove('active');
+  renderProducts();
+  renderServices();
+  renderPromos();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+// ── PRODUCTS ADMIN ──
+let nextPid = () => Date.now();
+
+function showProductForm(p) {
+  const f = document.getElementById('productForm');
+  f.style.display = 'block';
+  if (p) {
+    document.getElementById('productFormTitle').textContent = 'EDITAR PRODUCTO';
+    document.getElementById('editProductId').value = p.id;
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pCat').value = p.cat;
+    document.getElementById('pPrice').value = p.price;
+    document.getElementById('pBadge').value = p.badge;
+    document.getElementById('pImg').value = p.img;
+  } else {
+    document.getElementById('productFormTitle').textContent = 'NUEVO PRODUCTO';
+    document.getElementById('editProductId').value = '';
+    document.getElementById('pName').value = '';
+    document.getElementById('pPrice').value = '';
+    document.getElementById('pBadge').value = '';
+  }
+}
+
+function saveProduct() {
+  const id = document.getElementById('editProductId').value;
+  const obj = {
+    id: id ? parseInt(id) : nextPid(),
+    name: document.getElementById('pName').value.trim(),
+    cat:  document.getElementById('pCat').value,
+    price: parseInt(document.getElementById('pPrice').value) || 0,
+    badge: document.getElementById('pBadge').value.trim(),
+    img:  document.getElementById('pImg').value,
+  };
+  if (!obj.name) return alert('El nombre es requerido.');
+  if (id) {
+    const idx = DB.products.findIndex(p => p.id == id);
+    if (idx > -1) DB.products[idx] = obj;
+  } else {
+    DB.products.push(obj);
+  }
+  save();
+  document.getElementById('productForm').style.display = 'none';
+  renderProductTable();
+}
+
+function deleteProduct(id) {
+  if (!confirm('¿Eliminar este producto?')) return;
+  DB.products = DB.products.filter(p => p.id != id);
+  save(); renderProductTable();
+}
+
+function renderProductTable() {
+  const body = document.getElementById('productTableBody');
+  body.innerHTML = '';
+  const empty = document.getElementById('productEmpty');
+  if (DB.products.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  DB.products.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><img src="${p.img}" style="width:48px;height:48px;object-fit:cover;display:block;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22><rect width=%2248%22 height=%2248%22 fill=%22%23222%22/></svg>'"></td>
+      <td>${p.name}</td>
+      <td style="color:var(--muted);font-size:0.72rem;">${p.cat}</td>
+      <td style="color:var(--gold);">${fmt(p.price)}</td>
+      <td>${p.badge || '—'}</td>
+      <td style="white-space:nowrap;display:flex;gap:6px;padding:10px 12px;">
+        <button class="btn-edit" onclick="showProductForm(DB.products.find(x=>x.id==${p.id}))">Editar</button>
+        <button class="btn-delete" onclick="deleteProduct(${p.id})">Eliminar</button>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// ── SERVICES ADMIN ──
+function showServiceForm(s) {
+  const f = document.getElementById('serviceForm');
+  f.style.display = 'block';
+  if (s) {
+    document.getElementById('serviceFormTitle').textContent = 'EDITAR SERVICIO';
+    document.getElementById('editServiceId').value = s.id;
+    document.getElementById('sName').value = s.name;
+    document.getElementById('sIcon').value = s.icon;
+    document.getElementById('sPrice').value = s.price;
+    document.getElementById('sDuration').value = s.duration;
+    document.getElementById('sDesc').value = s.desc;
+  } else {
+    document.getElementById('serviceFormTitle').textContent = 'NUEVO SERVICIO';
+    document.getElementById('editServiceId').value = '';
+    ['sName','sIcon','sPrice','sDuration','sDesc'].forEach(id => document.getElementById(id).value = '');
+  }
+}
+
+function saveService() {
+  const id = document.getElementById('editServiceId').value;
+  const obj = {
+    id: id ? parseInt(id) : nextPid(),
+    name: document.getElementById('sName').value.trim(),
+    icon: document.getElementById('sIcon').value.trim() || '📷',
+    price: parseInt(document.getElementById('sPrice').value) || 0,
+    duration: document.getElementById('sDuration').value.trim(),
+    desc: document.getElementById('sDesc').value.trim(),
+  };
+  if (!obj.name) return alert('El nombre es requerido.');
+  if (id) {
+    const idx = DB.services.findIndex(s => s.id == id);
+    if (idx > -1) DB.services[idx] = obj;
+  } else { DB.services.push(obj); }
+  save();
+  document.getElementById('serviceForm').style.display = 'none';
+  renderServiceTable();
+}
+
+function deleteService(id) {
+  if (!confirm('¿Eliminar este servicio?')) return;
+  DB.services = DB.services.filter(s => s.id != id);
+  save(); renderServiceTable();
+}
+
+function renderServiceTable() {
+  const body = document.getElementById('serviceTableBody');
+  body.innerHTML = '';
+  const empty = document.getElementById('serviceEmpty');
+  if (DB.services.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  DB.services.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-size:1.4rem;">${s.icon}</td>
+      <td>${s.name}</td>
+      <td style="color:var(--gold);">${fmt(s.price)}</td>
+      <td style="color:var(--muted);font-size:0.72rem;">${s.duration}</td>
+      <td style="white-space:nowrap;display:flex;gap:6px;padding:10px 12px;">
+        <button class="btn-edit" onclick="showServiceForm(DB.services.find(x=>x.id==${s.id}))">Editar</button>
+        <button class="btn-delete" onclick="deleteService(${s.id})">Eliminar</button>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// ── PROMOS ADMIN ──
+function showPromoForm(pr) {
+  const f = document.getElementById('promoForm');
+  f.style.display = 'block';
+  if (pr) {
+    document.getElementById('promoFormTitle').textContent = 'EDITAR PROMOCIÓN';
+    document.getElementById('editPromoId').value = pr.id;
+    document.getElementById('prTitle').value = pr.title;
+    document.getElementById('prDiscount').value = pr.discount;
+    document.getElementById('prOriginal').value = pr.original;
+    document.getElementById('prPromo').value = pr.promo;
+    document.getElementById('prDesc').value = pr.desc;
+  } else {
+    document.getElementById('promoFormTitle').textContent = 'NUEVA PROMOCIÓN';
+    document.getElementById('editPromoId').value = '';
+    ['prTitle','prDiscount','prOriginal','prPromo','prDesc'].forEach(id => document.getElementById(id).value = '');
+  }
+}
+
+function savePromo() {
+  const id = document.getElementById('editPromoId').value;
+  const obj = {
+    id: id ? parseInt(id) : nextPid(),
+    title: document.getElementById('prTitle').value.trim(),
+    discount: parseInt(document.getElementById('prDiscount').value) || 0,
+    original: parseInt(document.getElementById('prOriginal').value) || 0,
+    promo: parseInt(document.getElementById('prPromo').value) || 0,
+    desc: document.getElementById('prDesc').value.trim(),
+  };
+  if (!obj.title) return alert('El título es requerido.');
+  if (id) {
+    const idx = DB.promos.findIndex(p => p.id == id);
+    if (idx > -1) DB.promos[idx] = obj;
+  } else { DB.promos.push(obj); }
+  save();
+  document.getElementById('promoForm').style.display = 'none';
+  renderPromoTable();
+}
+
+function deletePromo(id) {
+  if (!confirm('¿Eliminar esta promoción?')) return;
+  DB.promos = DB.promos.filter(p => p.id != id);
+  save(); renderPromoTable();
+}
+
+function renderPromoTable() {
+  const body = document.getElementById('promoTableBody');
+  body.innerHTML = '';
+  const empty = document.getElementById('promoEmpty');
+  if (DB.promos.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  DB.promos.forEach(pr => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:#fff;">${pr.title}</td>
+      <td style="color:var(--red);">${pr.discount > 0 ? '-' + pr.discount + '%' : '—'}</td>
+      <td style="color:var(--muted);text-decoration:line-through;">${fmt(pr.original)}</td>
+      <td style="color:var(--gold);">${fmt(pr.promo)}</td>
+      <td style="white-space:nowrap;display:flex;gap:6px;padding:10px 12px;">
+        <button class="btn-edit" onclick="showPromoForm(DB.promos.find(x=>x.id==${pr.id}))">Editar</button>
+        <button class="btn-delete" onclick="deletePromo(${pr.id})">Eliminar</button>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderAllTables() {
+  renderProductTable();
+  renderServiceTable();
+  renderPromoTable();
+}
+
+// ════════════════ WHATSAPP CONTACT FORM ════════════════
+function sendWA() {
+  const name = document.getElementById('contactName').value.trim();
+  const phone = document.getElementById('contactPhone').value.trim();
+  const msg = document.getElementById('contactMsg').value.trim();
+  if (!msg) return alert('Por favor escribe un mensaje.');
+  const text = `Hola FotoJaponesa, vengo de la página web.\n*Nombre:* ${name || 'Sin especificar'}\n*Tel:* ${phone || 'Sin especificar'}\n*Mensaje:* ${msg}`;
+  window.open('https://wa.me/573177572940?text=' + encodeURIComponent(text), '_blank');
+}
+
+// ════════════════ NAV MOBILE ════════════════
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ════════════════ SCROLL ANIMATIONS ════════════════
+function observeFadeUp() {
+  const els = document.querySelectorAll('.fade-up');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  els.forEach(el => obs.observe(el));
+}
+
+// ════════════════ CLOSE MODAL ON OVERLAY CLICK ════════════════
+document.getElementById('adminModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAdmin();
+});
+
+// ════════════════ INIT ════════════════
+renderProducts();
+renderServices();
+renderPromos();
+observeFadeUp();
+</script>
+</body>
+</html>
