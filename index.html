@@ -1170,26 +1170,13 @@
               <label>Badge (ej: Nuevo, Oferta)</label>
               <input type="text" id="pBadge" placeholder="Nuevo">
             </div>
-            <div class="form-group full">
-              <label>Imagen (nombre del archivo)</label>
-              <select id="pImg">
-                <option value="649195356_18083472746212967_6343403329254503684_n.jpg">Parlante KBroad KTS-1185 (azul)</option>
-                <option value="649228148_18083472782212967_112522463274791783_n.jpg">Parlante KBroad (lado)</option>
-                <option value="192846867_4085923531461342_5073090858210702633_n.jpg">Samsung Galaxy A32</option>
-                <option value="485987042_1280915417369302_4221300580109475872_n.jpg">Tecno Pova Neo</option>
-                <option value="494219917_1320184666775710_2110869277068374042_n.jpg">Secadora Browans</option>
-                <option value="118276080_3312201085500261_2377318347772761401_n.jpg">Decodificador Krono TDT</option>
-                <option value="132036641_3641806419206391_3623459176428622722_n.jpg">Micrófonos Karaoke (3 colores)</option>
-                <option value="132040041_3641806415873058_8680329540733184526_n.jpg">Micrófonos Karaoke (5 colores)</option>
-                <option value="132109151_3642138082506558_5879441072699816271_n.jpg">Cubo LED con hielo</option>
-                <option value="132042598_3642138079173225_6016531380912736782_n.jpg">Cubo LED púrpura</option>
-                <option value="192744385_4085906824796346_6807473928442611770_n.jpg">Redmi Note 10</option>
-                <option value="118213611_3302514369802266_5575555488636121022_n.jpg">Cortadora Wahl Icon</option>
-                <option value="118624670_3312150438838659_7583138341840152867_n.jpg">Dron Fold Drone</option>
-                <option value="483678604_9405715992815376_807983187731993684_n__1_.jpg">Instax Mini (verde)</option>
-                <option value="483921799_9405715902815385_3402235972505561669_n.jpg">Instax Mini 11 (azul)</option>
-              </select>
-            </div>
+        <div class="form-group full">
+          <label>Imagen (nombre del archivo, ej: producto.jpg)</label>
+          <input type="text" id="pImg" placeholder="mi-producto.jpg">
+          <div style="font-size:0.62rem;color:var(--muted);margin-top:4px;">
+            ⚠️ El archivo debe estar en la misma carpeta que el index.html
+          </div>
+        </div>
           </div>
           <div style="display:flex;gap:10px;margin-top:0.5rem;">
             <button class="btn-save" onclick="saveProduct()">Guardar</button>
